@@ -27,12 +27,12 @@ module.exports = (sequelize, DataTypes) => {
         len: { args: [6, 8], msg: 'The password must be between 6 and 8 characters.' },
       },
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        // associations can be defined here
-      },
-    },
   })
+
+  User.associate = (models) => {
+    // associations can be defined here
+    User.hasMany(models.Sale)
+  }
+
   return User
 }

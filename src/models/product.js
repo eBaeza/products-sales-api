@@ -24,12 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         isUrl: { msg: 'The image is not a valid url.' },
       },
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        // associations can be defined here
-      },
-    },
   })
+
+  Product.associate = (models) => {
+    // associations can be defined here
+  }
+
   return Product
 }

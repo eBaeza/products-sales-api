@@ -53,16 +53,17 @@ const initDB = (version) => {
 
   modelFiles.forEach((file) => {
     const model = sequelize.import(file)
-    db[model.name] = model
+    db[model.name] = sequelize.import(file)
   })
 
   Object.keys(db).forEach((modelName) => {
-    if (db[modelName].associate) {
+    if ('associate' in db[modelName]) {
       db[modelName].associate(db)
     }
   })
 
   db.sequelize = sequelize
+  db.Sequelize = Sequelize
 
   return db
 }
