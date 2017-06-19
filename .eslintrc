@@ -1,0 +1,18 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": "airbnb/base",
+  "parser": "babel-eslint",
+  "plugins": [
+    "import"
+  ],
+  "rules": {
+    "global-require": 0,
+    "arrow-body-style": 0,
+    "space-before-function-paren": 0,
+    "semi": ["error", "never"],
+    "no-underscore-dangle": 0,
+    "no-unused-vars": [1]
+  }
+}

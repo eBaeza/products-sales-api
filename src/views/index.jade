@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  div.container
+    div.row.justify-content-md-center
+      div.col-5
+        div.card
+          div.row.justify-content-md-center
+            div.col-6
+              img.img-fluid(src="https://edgarbaeza.mx/static/media/edgarbaeza-sitting.c7a90a66.png")
+          div.card-block
+            h4.card-title= title
+            p.card-text by Edgar Baeza
+          ul.list-group
+            li.list-group-item
+              p email: 
+                a(
+                  href="mailto:holamundo@edgarbaeza.mx"
+                ) holamundo@edgarbaeza.mx
+            li.list-group-item
+              p web site: 
+                a(href="http://edgarbaeza.mx" target="_blank") edgarbaeza.mx
+
+      
