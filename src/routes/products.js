@@ -6,27 +6,27 @@ const initDB = require('../models')
 
 const router = Router()
 
-/* List of users */
+/* List of products */
 router.get('/', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
-  const { User } = DB
+  const { Product } = DB
 
   const page = Number(req.query.page || 1)
   const limit = 100
   const offset = (page - 1) * limit
 
   try {
-    const users = await User.findAndCountAll({
+    const products = await Product.findAndCountAll({
       offset,
       limit,
-      order: [['firstName', 'ASC'], ['lastName', 'ASC']],
+      order: [['createdAt', 'ASC']],
     })
 
     res.status(200).json({
       page,
-      total: users.count,
-      data: users.rows,
+      total: products.count,
+      data: products.rows,
     })
   } catch (error) {
     console.log(error)
@@ -35,25 +35,25 @@ router.get('/', async (req, res) => {
   }
 })
 
-/* Create a user */
+/* Create a product */
 router.post('/', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
-  const { User } = DB
+  const { Product } = DB
 
-  const userData = req.body
-  const newUser = User.build(userData)
+  const productData = req.body
+  const newProduct = Product.build(productData)
 
   try {
-    await newUser.validate()
+    await newProduct.validate()
   } catch (errors) {
     res.status(400).json(validationErrorsMap(errors))
     return
   }
 
   try {
-    await newUser.save()
-    res.status(201).json(newUser)
+    await newProduct.save()
+    res.status(201).json(newProduct)
   } catch (error) {
     console.log(error)
     // oops! something went wrong
@@ -61,22 +61,22 @@ router.post('/', async (req, res) => {
   }
 })
 
-/* Get a single user */
+/* Get a single product */
 router.get('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
-  const { User } = DB
+  const { Product } = DB
   const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
 
   try {
-    const user = await User.findById(id)
+    const product = await Product.findById(id)
 
-    if (user === null) {
-      res.status(404).json({ error: 'User doesn\'t exist' })
+    if (product === null) {
+      res.status(404).json({ error: 'The product doesn\'t exist' })
       return
     }
 
-    res.status(200).json(user)
+    res.status(200).json(product)
   } catch (error) {
     console.log(error)
     // oops! something went wrong
@@ -84,44 +84,44 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-/* Update a user */
+/* Update a product */
 router.put('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
-  const { User } = DB
+  const { Product } = DB
   const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
 
-  const user = await User.findById(id)
+  const product = await Product.findById(id)
 
-  if (user === null) {
-    res.status(404).json({ error: 'User doesn\'t exist' })
+  if (product === null) {
+    res.status(404).json({ error: 'The product doesn\'t exist' })
     return
   }
 
   try {
-    await user.update(req.body)
-    res.status(200).json(user)
+    await product.update(req.body)
+    res.status(200).json(product)
   } catch (errors) {
     res.status(400).json(validationErrorsMap(errors))
   }
 })
 
-/* delete a user */
+/* delete a product */
 router.delete('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
-  const { User } = DB
+  const { Product } = DB
   const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
 
-  const user = await User.findById(id)
+  const product = await Product.findById(id)
 
-  if (user === null) {
-    res.status(404).json({ error: 'User doesn\'t exist' })
+  if (product === null) {
+    res.status(404).json({ error: 'The product doesn\'t exist' })
     return
   }
 
   try {
-    await user.destroy()
+    await product.destroy()
     res.status(204).end()
   } catch (error) {
     console.log(error)

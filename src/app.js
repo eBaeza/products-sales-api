@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 
 const index = require('./routes/index')
 const users = require('./routes/users')
+const products = require('./routes/products')
 
 const app = express()
 
@@ -30,6 +31,7 @@ app.use('/:database', (req, res, next) => {
 
 app.use('/', index)
 app.use('/:database/users', users)
+app.use('/:database/products', products)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

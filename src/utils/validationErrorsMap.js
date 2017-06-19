@@ -6,10 +6,10 @@ const toCapitalizedWords = (name) => {
   return words.map(capitalize).join(' ')
 }
 
-module.exports = validate => validate.errors.map((e) => {
+module.exports = validate => ({ errors: validate.errors.map((e) => {
   if (e.type === 'notNull Violation') {
     return `${toCapitalizedWords(e.path)} is required.`
   }
 
   return e.message
-})
+}) })
