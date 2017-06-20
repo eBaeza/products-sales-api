@@ -6,6 +6,7 @@
     "start": "nodemon ./src/index.js --exec babel-node",
     "build": "babel src -d dist",
     "serve": "NODE_ENV=production node dist/index.js",
+    "init": "cp ./config/.app.example ./config/app.json && cp ./config/.database.example ./config/database.json",
     "sequelize": "node_modules/.bin/sequelize",
     "migrate": "npm run sequelize db:migrate",
     "migrate:v2": "npm run sequelize db:migrate -- --env development_2",
