@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": null,
+    "database": "my_database",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "development_2": {
+    "username": "root",
+    "password": "1234",
+    "database": "my_database_2",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
