@@ -14,6 +14,7 @@ import index from './routes/index'
 import auth from './routes/auth'
 import users from './routes/users'
 import products from './routes/products'
+import sales from './routes/sales'
 
 const app = express()
 
@@ -54,6 +55,7 @@ app.use('/', index)
 app.use('/:database/auth', auth)
 app.use('/:database/users', users)
 app.use('/:database/products', products)
+app.use('/:database/sales', sales)
 
 /**
  * Handler errors
