@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import validationErrorsMap from '../utils/validationErrorsMap'
+import { normalizeIdParam } from '../utils/index'
 
 // Models
 import initDB from '../models'
@@ -66,7 +67,7 @@ router.get('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
   const { Product } = DB
-  const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
+  const id = normalizeIdParam(req.params.id)
 
   try {
     const product = await Product.findById(id)
@@ -89,7 +90,7 @@ router.put('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
   const { Product } = DB
-  const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
+  const id = normalizeIdParam(req.params.id)
 
   const product = await Product.findById(id)
 
@@ -111,7 +112,7 @@ router.delete('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
   const { Product } = DB
-  const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
+  const id = normalizeIdParam(req.params.id)
 
   const product = await Product.findById(id)
 
@@ -128,6 +129,26 @@ router.delete('/:id', async (req, res) => {
     // oops! something went wrong
     res.status(500).json({ error: 'Oops! something went wrong' })
   }
+})
+
+/* Get a total */
+router.get('/:id/totalConsuming', async (req, res) => {
+  const version = req.db
+  const DB = initDB(version)
+  const { Product } = DB
+  const id = normalizeIdParam(req.params.id)
+
+  const product = await Product.findById(id)
+
+  if (product === null) {
+    res.status(404).json({ error: 'The product doesn\'t exist' })
+  }
+
+  const sales = await product.getSaleProducts()
+  const totalUnits = sales.length
+  const totalConsuming = product.price * totalUnits
+
+  res.json({ ...product.get({ plain: true }), totalUnits, totalConsuming })
 })
 
 export default router
