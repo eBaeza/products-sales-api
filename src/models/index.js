@@ -3,6 +3,7 @@ const path = require('path')
 const Sequelize = require('sequelize')
 const configs = require('../../config/database.json')
 
+const env = process.env.NODE_ENV || 'development'
 const basename = path.basename(module.filename)
 const modelFiles = []
 
@@ -21,17 +22,17 @@ const setConfigDB = (version) => {
 
   switch (version) {
     case 'v1': {
-      _v = 'development'
+      _v = env
       break
     }
 
     case 'v2': {
-      _v = 'development_2'
+      _v = `${env}_2`
       break
     }
 
     default: {
-      _v = 'development'
+      _v = env
       break
     }
   }

@@ -110,7 +110,7 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-/* delete a user */
+/* Delete a user */
 router.delete('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)

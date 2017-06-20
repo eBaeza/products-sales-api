@@ -7,7 +7,6 @@ const toCapitalizedWords = (name) => {
 }
 
 module.exports = validate => ({ errors: validate.errors.map((e) => {
-  console.log(e)
   if (e.type === 'notNull Violation') {
     return `${toCapitalizedWords(e.path)} is required.`
   }

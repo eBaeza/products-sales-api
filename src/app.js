@@ -17,7 +17,7 @@ const products = require('./routes/products')
 const app = express()
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'))
+app.set('views', path.join(__dirname, '../views'))
 app.set('view engine', 'jade')
 
 // uncomment after placing your favicon in /public
@@ -31,17 +31,22 @@ app.use(cookieParser())
 // Enable CORS
 app.use(cors())
 
-// Authentication middleware
-app.use('/:database', expressJwt({ secret: config.secret }))
-// Handle error Authentication
-app.use((err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') res.status(401).json({ error: 'Invalid authentication.' })
-})
-
 // Set database from url
 app.use('/:database', (req, res, next) => {
   req.db = req.params.database || 'v1'
   next()
+})
+// Authentication middleware
+app.use(expressJwt({ secret: config.secret }).unless({
+  path: [
+    '/',
+    /^\/.*\/auth/,
+    { url: /^\/.*\/users/, methods: ['POST'] },
+  ],
+}))
+// Handle error Authentication
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') res.status(401).json({ error: 'Invalid authentication.' })
 })
 
 app.use('/', index)

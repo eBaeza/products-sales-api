@@ -5,12 +5,14 @@
   "scripts": {
     "start": "nodemon ./src/index.js --exec babel-node",
     "build": "babel src -d dist",
-    "serve": "node dist/index.js",
+    "serve": "NODE_ENV=production node dist/index.js",
     "sequelize": "node_modules/.bin/sequelize",
     "migrate": "npm run sequelize db:migrate",
     "migrate:v2": "npm run sequelize db:migrate -- --env development_2",
     "migrate:undo": "npm run sequelize db:migrate:undo:all",
-    "migrate:v2:undo": "npm run sequelize db:migrate:undo:all -- --env development_2"
+    "migrate:v2:undo": "npm run sequelize db:migrate:undo:all -- --env development_2",
+    "seed": "npm run sequelize db:seed:all",
+    "seed:v2": "npm run sequelize db:seed:all -- --env development_2"
   },
   "dependencies": {
     "bcrypt": "^1.0.2",
