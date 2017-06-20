@@ -4,6 +4,7 @@ const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const expressJwt = require('express-jwt')
 
 const config = require('../config/app.json')
@@ -26,6 +27,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 // app.use(express.static(path.join(__dirname, 'public')));
+
+// Enable CORS
+app.use(cors())
 
 // Authentication middleware
 app.use('/:database', expressJwt({ secret: config.secret }))
