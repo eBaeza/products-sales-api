@@ -67,6 +67,28 @@ router.post('/', async (req, res) => {
   }
 })
 
+/* Total consuming on sales */
+router.get('/totalConsuming', async (req, res, next) => {
+  const version = req.db
+  const DB = initDB(version)
+  const { Sale } = DB
+
+  const sales = await Sale.findAndCountAll({
+    where: {
+      UserId: req.user.id,
+    },
+    attributes: ['folio', 'title', 'description', 'total'],
+  })
+
+  const totalConsuming = sales.rows.reduce((t, s) => t + s.total, 0)
+
+  res.status(200).json({
+    salesNumber: sales.count,
+    totalConsuming,
+    sales: sales.rows,
+  })
+})
+
 /* Get a single sale */
 router.get('/:id', async (req, res) => {
   const version = req.db
