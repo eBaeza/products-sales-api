@@ -262,21 +262,24 @@ router.delete('/:id/products', async (req, res) => {
     return
   }
 
-  const toRemove = await Promise.all(productIds.map((p, idx) => (
-    SaleProduct.findOne({
-      where: {
-        SaleId: sale.id,
-        ProductId: p.id,
-      },
-      offset: idx,
-      order: [['createdAt', 'DESC']],
-    })
-  )))
+  const toRemove = await Promise.all(productIds.map((p, idx) => SaleProduct.findOne({
+    where: {
+      SaleId: sale.id,
+      ProductId: p.id,
+    },
+    offset: idx,
+    order: [['id', 'DESC']],
+    include: [Product],
+  })))
+
+  // Subctract removed products from total
+  const total = toRemove
+    .filter(p => p !== null).reduce((t, p) => t - p.Product.price, sale.total)
 
   // Remove products
   await Promise.all(toRemove.filter(p => p !== null).map(p => p.destroy()))
 
-  // await sale.update({ total: sale.total + sum })
+  await sale.update({ total })
   await sale.reload({
     include: [{
       model: SaleProduct,
