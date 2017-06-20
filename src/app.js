@@ -4,7 +4,9 @@ const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-// const jwt = require('jsonwebtoken')
+const expressJwt = require('express-jwt')
+
+const config = require('../config/app.json')
 
 const index = require('./routes/index')
 const auth = require('./routes/auth')
@@ -24,6 +26,13 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 // app.use(express.static(path.join(__dirname, 'public')));
+
+// Authentication middleware
+app.use('/:database', expressJwt({ secret: config.secret }))
+// Handle error Authentication
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') res.status(401).json({ error: 'Invalid authentication.' })
+})
 
 // Set database from url
 app.use('/:database', (req, res, next) => {
