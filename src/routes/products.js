@@ -1,8 +1,8 @@
-const { Router } = require('express')
-const validationErrorsMap = require('../utils/validationErrorsMap')
+import { Router } from 'express'
+import validationErrorsMap from '../utils/validationErrorsMap'
 
 // Models
-const initDB = require('../models')
+import initDB from '../models'
 
 const router = Router()
 
@@ -130,4 +130,4 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-module.exports = router
+export default router

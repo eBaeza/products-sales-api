@@ -2,9 +2,11 @@
  * Module dependencies.
  */
 
-const app = require('./app')
-const debug = require('debug')('products-sales-api:server')
-const http = require('http')
+import makeDebug from 'debug'
+import http from 'http'
+import app from './app'
+
+const debug = makeDebug('products-sales-api:server')
 
 /**
  * Normalize a port into a number, string, or false.

@@ -6,7 +6,7 @@ const toCapitalizedWords = (name) => {
   return words.map(capitalize).join(' ')
 }
 
-module.exports = validate => ({ errors: validate.errors.map((e) => {
+const validationErrorsMap = validate => ({ errors: validate.errors.map((e) => {
   if (e.type === 'notNull Violation') {
     return `${toCapitalizedWords(e.path)} is required.`
   }
@@ -17,3 +17,5 @@ module.exports = validate => ({ errors: validate.errors.map((e) => {
 
   return e.message
 }) })
+
+export default validationErrorsMap

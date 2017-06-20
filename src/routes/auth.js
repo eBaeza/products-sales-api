@@ -1,10 +1,10 @@
-const { Router } = require('express')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+import { Router } from 'express'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 // config
-const config = require('../../config/app.json')
+import config from '../../config/app.json'
 // Models
-const initDB = require('../models')
+import initDB from '../models'
 
 const router = Router()
 
@@ -37,4 +37,4 @@ router.post('/', async (req, res) => {
   }
 })
 
-module.exports = router
+export default router

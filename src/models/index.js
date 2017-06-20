@@ -1,7 +1,7 @@
-const fs = require('fs')
-const path = require('path')
-const Sequelize = require('sequelize')
-const configs = require('../../config/database.json')
+import fs from 'fs'
+import path from 'path'
+import Sequelize from 'sequelize'
+import configs from '../../config/database.json'
 
 const env = process.env.NODE_ENV || 'development'
 const basename = path.basename(module.filename)
@@ -69,4 +69,4 @@ const initDB = (version) => {
   return db
 }
 
-module.exports = initDB
+export default initDB
