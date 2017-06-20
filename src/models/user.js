@@ -1,3 +1,5 @@
+const { hashSync } = require('bcrypt')
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     firstName: {
@@ -13,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: { msg: 'Your email is required.' },
         isEmail: { msg: 'Your email has an invalid format.' },
@@ -21,10 +24,9 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        notEmpty: { msg: 'Your password is required.' },
-        isAlphanumeric: { msg: 'The password only accepts alphanumeric characters.' },
-        len: { args: [6, 8], msg: 'The password must be between 6 and 8 characters.' },
+      set(val) {
+        const hash = hashSync(val, 5)
+        this.setDataValue('password', hash)
       },
     },
   })

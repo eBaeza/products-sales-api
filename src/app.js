@@ -4,8 +4,10 @@ const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+// const jwt = require('jsonwebtoken')
 
 const index = require('./routes/index')
+const auth = require('./routes/auth')
 const users = require('./routes/users')
 const products = require('./routes/products')
 
@@ -30,6 +32,7 @@ app.use('/:database', (req, res, next) => {
 })
 
 app.use('/', index)
+app.use('/:database/auth', auth)
 app.use('/:database/users', users)
 app.use('/:database/products', products)
 

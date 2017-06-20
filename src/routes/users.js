@@ -55,9 +55,13 @@ router.post('/', async (req, res) => {
     await newUser.save()
     res.status(201).json(newUser)
   } catch (error) {
-    console.log(error)
-    // oops! something went wrong
-    res.status(500).json({ error: 'Oops! something went wrong' })
+    if (error.name && error.name === 'SequelizeUniqueConstraintError') {
+      res.status(400).json(validationErrorsMap(error))
+    } else {
+      console.log(error)
+      // oops! something went wrong
+      res.status(500).json({ error: 'Oops! something went wrong' })
+    }
   }
 })
 
