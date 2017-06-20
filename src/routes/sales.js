@@ -192,12 +192,20 @@ router.post('/:id/products', async (req, res) => {
     return
   }
 
-  Promise.all(products.map(p => SaleProduct.create({
+  // Create news relation
+  const newAssoc = await Promise.all(products.map(p => SaleProduct.create({
     SaleId: sale.id,
     ProductId: p.id,
   })))
+  // Get info of added products
+  const addedProducts = await Promise.all(newAssoc.map(nA => nA.getProduct()))
+  // Get total
+  const total = addedProducts.reduce(
+    (t, p) => t + p.price,
+    sale.total,
+  )
 
-  // await sale.update({ total: sale.total + sum })
+  await sale.update({ total })
   await sale.reload({
     include: [{
       model: SaleProduct,
