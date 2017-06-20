@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import validationErrorsMap from '../utils/validationErrorsMap'
+import { normalizeIdParam } from '../utils'
 
 // Models
 import initDB from '../models'
@@ -70,11 +71,16 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
-  const { Sale } = DB
-  const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
+  const { Sale, SaleProduct, Product } = DB
+  const id = normalizeIdParam(req.params.id)
 
   try {
-    const sale = await Sale.findById(id)
+    const sale = await Sale.findById(id, {
+      include: [{
+        model: SaleProduct,
+        include: Product,
+      }],
+    })
 
     if (sale === null) {
       res.status(404).json({ error: 'The sale doesn\'t exist' })
@@ -94,7 +100,7 @@ router.put('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
   const { Sale } = DB
-  const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
+  const id = normalizeIdParam(req.params.id)
 
   const sale = await Sale.findById(id)
 
@@ -121,7 +127,7 @@ router.delete('/:id', async (req, res) => {
   const version = req.db
   const DB = initDB(version)
   const { Sale } = DB
-  const id = Number.isInteger(parseInt(req.params.id, 10)) ? req.params.id : null
+  const id = normalizeIdParam(req.params.id)
 
   const sale = await Sale.findById(id)
 
@@ -138,6 +144,139 @@ router.delete('/:id', async (req, res) => {
     // oops! something went wrong
     res.status(500).json({ error: 'Oops! something went wrong' })
   }
+})
+
+/* Add products to sale */
+router.post('/:id/products', async (req, res) => {
+  let productIds = Array.isArray(req.body.products) ? req.body.products : []
+  const version = req.db
+  const DB = initDB(version)
+  const { Sale, SaleProduct, Product } = DB
+
+  const sale = await Sale.findById(req.params.id)
+
+  if (sale === null) {
+    res.status(404).json({ error: 'The sale doesn\'t exist' })
+    return
+  }
+
+  // Normalize ids
+  productIds = productIds.map(pI => ({
+    id: normalizeIdParam(pI),
+    param: pI,
+  }))
+
+  const invalidIds = productIds.filter(pI => pI.id === null).map(pI => pI.param)
+
+  if (invalidIds.length > 0) {
+    res.status(400).json({
+      error: `The following are not valid ids for a Product: "${invalidIds.join(', ')}"`,
+    })
+    return
+  }
+
+  // Find products
+  const products = await Promise.all(
+    productIds.map(pI => Product.findById(pI.id)),
+  )
+
+  const notFound = products.reduce((nF, p, idx) => {
+    if (p === null) nF.push(productIds[idx].param)
+    return nF
+  }, [])
+
+  if (notFound.length > 0) {
+    res.status(400).json({
+      error: `The following products do not exist: "${notFound.join(', ')}"`,
+    })
+    return
+  }
+
+  Promise.all(products.map(p => SaleProduct.create({
+    SaleId: sale.id,
+    ProductId: p.id,
+  })))
+
+  // await sale.update({ total: sale.total + sum })
+  await sale.reload({
+    include: [{
+      model: SaleProduct,
+      include: Product,
+    }],
+  })
+
+  res.status(200).json(sale)
+})
+
+/* Add products to sale */
+router.delete('/:id/products', async (req, res) => {
+  let productIds = Array.isArray(req.body.products) ? req.body.products : []
+  const version = req.db
+  const DB = initDB(version)
+  const { Sale, SaleProduct, Product } = DB
+
+  const sale = await Sale.findById(req.params.id)
+
+  if (sale === null) {
+    res.status(404).json({ error: 'The sale doesn\'t exist' })
+    return
+  }
+
+  // Normalize ids
+  productIds = productIds.map(pI => ({
+    id: normalizeIdParam(pI),
+    param: pI,
+  }))
+
+  const invalidIds = productIds.filter(pI => pI.id === null).map(pI => pI.param)
+
+  if (invalidIds.length > 0) {
+    res.status(400).json({
+      error: `The following are not valid ids for a Product: "${invalidIds.join(', ')}"`,
+    })
+    return
+  }
+
+  // Find products
+  const products = await Promise.all(
+    productIds.map(pI => Product.findById(pI.id)),
+  )
+
+  const notFound = products.reduce((nF, p, idx) => {
+    if (p === null) nF.push(productIds[idx].param)
+    return nF
+  }, [])
+
+  if (notFound.length > 0) {
+    res.status(400).json({
+      error: `The following products do not exist: "${notFound.join(', ')}"`,
+    })
+    return
+  }
+
+  const toRemove = await Promise.all(productIds.map((p, idx) => (
+    SaleProduct.findOne({
+      where: {
+        SaleId: sale.id,
+        ProductId: p.id,
+      },
+      offset: idx,
+      order: [['createdAt', 'DESC']],
+    })
+  )))
+
+  // Remove products
+  await Promise.all(toRemove.filter(p => p !== null).map(p => p.destroy()))
+
+  // await sale.update({ total: sale.total + sum })
+  await sale.reload({
+    include: [{
+      model: SaleProduct,
+      include: Product,
+    }],
+  })
+
+  res.status(200).json(sale)
 })
 
 export default router

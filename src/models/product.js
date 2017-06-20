@@ -27,7 +27,7 @@ export default (sequelize, DataTypes) => {
   })
 
   Product.associate = (models) => {
-    // associations can be defined here
+    Product.hasMany(models.SaleProduct)
   }
 
   return Product
