@@ -24,7 +24,7 @@ export default (sequelize, DataTypes) => {
   Sale.associate = (models) => {
     // associations can be defined here
     Sale.belongsTo(models.User)
-    Sale.hasMany(models.SaleProduct)
+    Sale.hasMany(models.SaleProduct, { onDelete: 'cascade' })
   }
 
   return Sale

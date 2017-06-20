@@ -10,10 +10,12 @@ module.exports = {
       SaleId: {
         type: Sequelize.INTEGER.UNSIGNED,
         references: { model: 'Sales', key: 'id' },
+        onDelete: 'cascade',
       },
       ProductId: {
         type: Sequelize.INTEGER.UNSIGNED,
         references: { model: 'Products', key: 'id' },
+        onDelete: 'cascade',
       },
       createdAt: {
         allowNull: false,
