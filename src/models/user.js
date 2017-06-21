@@ -24,9 +24,16 @@ export default (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      set(val) {
-        const hash = hashSync(val, 5)
-        this.setDataValue('password', hash)
+      validate: {
+        notEmpty: { msg: 'Your password is required.' },
+        isAlphanumeric: { msg: 'The password only accepts alphanumeric characters.' },
+        len: { args: [6, 8], msg: 'The password must be between 6 and 8 characters.' },
+      },
+    },
+  }, {
+    hooks: {
+      afterValidate(model, options) {
+        model.setDataValue('password', hashSync(model.password, 5))
       },
     },
   })

@@ -45,17 +45,13 @@ router.post('/', async (req, res) => {
   const newUser = User.build(userData)
 
   try {
-    await newUser.validate()
-  } catch (errors) {
-    res.status(400).json(validationErrorsMap(errors))
-    return
-  }
-
-  try {
     await newUser.save()
     res.status(201).json(newUser)
   } catch (error) {
-    if (error.name && error.name === 'SequelizeUniqueConstraintError') {
+    if (error.name && (
+      error.name === 'SequelizeUniqueConstraintError' ||
+      error.name === 'SequelizeValidationError'
+    )) {
       res.status(400).json(validationErrorsMap(error))
     } else {
       console.log(error)
