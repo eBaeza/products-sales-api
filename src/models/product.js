@@ -14,7 +14,7 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isFloat: { msg: 'The price must be numeric.' },
-        min: { args: 1, msg: 'The price should not be less than 1.' },
+        min: { args: [0], msg: 'The price should not be less than 0.' },
       },
     },
     image: {
