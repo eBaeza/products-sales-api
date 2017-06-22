@@ -1,6 +1,14 @@
 {
   "presets": [
-    "es2015",
-    "stage-2"
-  ]
+    "stage-3",
+    ["env", {
+      "targets": { "node": true },
+      "useBuiltIns": true
+    }]
+  ],
+  "env": {
+    "production": {
+      "presets": ["babili"]
+    }
+  }
 }
